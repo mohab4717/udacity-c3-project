@@ -242,7 +242,7 @@ jobs:
           command: |
             cd backend
             npm install
-            npm-install-peers
+          # npm-install-peers
             npm audit fix --audit-level=critical --force
             npm run migrations > migrations_dump.txt
       - run:
