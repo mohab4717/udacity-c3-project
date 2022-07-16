@@ -191,7 +191,24 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment      
-
+  configure-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_ansible
+      - add_ssh_keys:
+          fingerprints: ["9f:74:a2:05:61:99:8c:ac:41:65:13:e1:ab:2f:9d:25"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Configure Server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
 workflows:
   default:
      jobs:
@@ -216,3 +233,5 @@ workflows:
           filters:
             branches:
               only: [master]
+       - configure-infrastructure:
+          requires: [deploy-infrastructure]       
