@@ -100,7 +100,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            # Your code here
+            # Your code herex
             cd backend
             npm install
             npm run build 
@@ -311,7 +311,9 @@ jobs:
             npm run build
             tar -czf artifact.tar.gz dist/* package*
             cd ..
+            pwd
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            ls -ltr .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
           command: |
