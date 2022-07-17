@@ -1,8 +1,6 @@
 version: 2.1
 
 commands:
-# hello
-
   install_awscli:
     description: Install AWS CLI v2
     steps:
@@ -36,6 +34,7 @@ commands:
             # Use n version manager to use Node.js v13.8.0
             sudo npm install --global n
             sudo n 13.8.0
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -175,9 +174,10 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
       # - notify_on_failure
+
   deploy-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: amazon/aws-cli
     steps:
       - checkout
       - install_awscli
@@ -215,7 +215,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/python
     steps:
       - checkout
       - install_awscli
@@ -233,7 +233,7 @@ jobs:
       - destroy-environment
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - install_awscli
@@ -242,7 +242,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --audit-level=critical --force
             npm run migrations > migrations_dump.txt
       - run:
           name: Send migration status to kvdb.io
