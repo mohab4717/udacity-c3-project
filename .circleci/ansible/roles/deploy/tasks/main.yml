@@ -5,11 +5,11 @@
     mode: 0755
 
 - name: "move files to server"
-    become: yes
-    synchronize:
-      src: ~/artifact.tar.gz
-      dest: ~/artifact.tar.gz
-      recursive: true
+  become: yes
+  synchronize:
+    src: ~/artifact.tar.gz
+    dest: ~/artifact.tar.gz
+    recursive: true
 
 - name: "Unarchive backend files"
   unarchive:
