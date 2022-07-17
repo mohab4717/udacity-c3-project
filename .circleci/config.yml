@@ -252,7 +252,6 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-
 workflows:
   default:
      jobs:
