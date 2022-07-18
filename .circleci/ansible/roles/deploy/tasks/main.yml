@@ -3,6 +3,13 @@
     path: ~/backend-app
     state: directory
 
+- name: "move files to server"
+  become: yes
+  synchronize:
+    src: artifact.tar.gz
+    dest: ~/artifact.tar.gz
+    recursive: true
+    
 - name: "Unarchive backend files"
   unarchive:
     src: artifact.tar.gz
@@ -12,7 +19,7 @@
   shell: |
     cd ~/backend-app
     npm i
-    
+
 - name: "Executing Node app with PM2"
   shell: |
     cd ~/backend-app/dist
