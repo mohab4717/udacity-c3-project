@@ -211,53 +211,53 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment      
+      - destroy-environment 
 
-  configure-infrastructure:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - install_awscli
-      - install_ansible
-      - add_ssh_keys:
-          fingerprints: ["9f:74:a2:05:61:99:8c:ac:41:65:13:e1:ab:2f:9d:25"]
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Configure Server
-          command: |
-            cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment
+  # configure-infrastructure:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
+  #     - install_awscli
+  #     - install_ansible
+  #     - add_ssh_keys:
+  #         fingerprints: ["9f:74:a2:05:61:99:8c:ac:41:65:13:e1:ab:2f:9d:25"]
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Configure Server
+  #         command: |
+  #           cd .circleci/ansible
+  #           cat inventory.txt
+  #           ansible-playbook -i inventory.txt configure-server.yml
+  #     - destroy-environment
 
-  run-migrations:
-    docker:
-      - image: cimg/node:13.8.0
-    steps:
-      - checkout
-      - install_awscli
-      - run:
-          name: Run migrations
-          command: |
-            cd backend
-            npm install
-            npm run migrations > migrations_dump.txt
-      - run:
-          name: Send migration results to kvdb
-          working_directory: ./backend
-          command: |
-             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-             then
-               curl https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '2'
-               curl --insecure https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  
-               echo "test"
-             fi
-               curl -k https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '3'
-               curl --insecure https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  
-      - destroy-environment
-      - revert-migrations
+  # run-migrations:
+  #   docker:
+  #     - image: cimg/node:13.8.0
+  #   steps:
+  #     - checkout
+  #     - install_awscli
+  #     - run:
+  #         name: Run migrations
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run migrations > migrations_dump.txt
+  #     - run:
+  #         name: Send migration results to kvdb
+  #         working_directory: ./backend
+  #         command: |
+  #            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+  #            then
+  #              curl https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '2'
+  #              curl --insecure https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+  #              echo "test"
+  #            fi
+  #              curl -k https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '3'
+  #              curl --insecure https://kvdb.io/AhoU8Ls54tx4YiAeXZdag4/migration_${CIRCLE_WORKFLOW_ID:0:7}  
+  #     - destroy-environment
+  #     - revert-migrations
 
   # deploy-frontend:
   #   docker:
@@ -437,10 +437,10 @@ workflows:
           filters:
             branches:
               only: [master]
-       - configure-infrastructure:
-          requires: [deploy-infrastructure]       
-       - run-migrations:
-          requires: [configure-infrastructure]
+      #  - configure-infrastructure:
+      #     requires: [deploy-infrastructure]       
+      #  - run-migrations:
+      #     requires: [configure-infrastructure]
       #  - deploy-frontend:
       #     requires: [run-migrations]
       #  - deploy-backend:
